@@ -7,7 +7,8 @@ let inputTag
 let sceneManager
 let model
 
-window.onload = () => {
+window.onload = () => 
+{
     inputTag = document.querySelector('input#file-input')
     inputTag.addEventListener('input', onInput)
     setupScene()
@@ -31,7 +32,7 @@ function setupScene()
     sceneManager = new ENGINE.SceneManager(canvas)
     let input = new ENGINE.InputManager('Input', canvas)
     sceneManager.register(input)
-    let cameraManager = new ENGINE.FirstPersonCameraManager('Camera', 50)
+    let cameraManager = new ENGINE.OrbitalCameraManager('Camera', 50)
     cameraManager.registerInput(input)
     cameraManager.setPosition(0, 0, 5)
     sceneManager.register(cameraManager)

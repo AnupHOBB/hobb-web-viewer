@@ -8,15 +8,19 @@ export class OrbitControl
 {
     /**
      * @param {THREE.Object3D} object3D threejs object that is supposed to orbit around a point
-     * @param {THREE.Vector3} lookAtPosition the point around which the object is supposed to revolve
      */
-    constructor(object3D, lookAtPosition)
+    constructor(object3D)
     {
         this.object3D = object3D
-        this.lookAtPosition = lookAtPosition
+        this.center = new THREE.Vector3()
         this.restriction = p=>{return [true, p]}
         this.isOrbit = false
     }
+    
+    /**
+     * @param {THREE.Vector3} center the point around which the object is supposed to revolve
+     */
+    setCenter(center) { this.center = center }
 
     /**
      * Adds a restriction to the orbit movement
@@ -27,25 +31,25 @@ export class OrbitControl
     /**
      * Delegates call to OrbitControlCore's orbit if its isOrbit flag is true.
      * @param {THREE.Vector3} axis the axis around which the object will orbit
-     * @param {Number} speed the speed at which the object will orbit
+     * @param {Number} angle the angle by which the object will orbit
      */
-    pan(axis, speed)
+    orbit(axis, angle)
     {
         if (!this.isOrbit)
-            this._orbit(axis, speed)
+            this._orbit(axis, angle)
     }
 
     /**
      * Delegates call to OrbitControlCore's auto if its isOrbit flag is true.
      * @param {THREE.Vector3} axis the axis around which the object will orbit
-     * @param {Number} speed the speed at which the object will orbit
+     * @param {Number} angle the angle by which the object will orbit
      */
-    start(axis, speed)
+    start(axis, angle)
     {
         if (!this.isOrbit)
         {
             this.isOrbit = true
-            this._auto(axis, speed)
+            this._auto(axis, angle)
         }
     }
 
@@ -57,34 +61,34 @@ export class OrbitControl
     /**
      * Moves the object around the orbit. Call this if the object needs to be moved automatically.
      * @param {THREE.Vector3} axis the axis around which the object will orbit
-     * @param {Number} speed the speed at which the object will orbit
+     * @param {Number} angle the angle by which the object will orbit
      */
-    _auto(axis, speed)
+    _auto(axis, angle)
     {
         if (this.isOrbit)
         {
             this._orbit(axis, 1)
-            setTimeout(()=>this._auto(axis, speed), 1000/speed)
+            setTimeout(()=>this._auto(axis, angle), 1000/angle)
         }
     }
 
     /**
      * Moves the object around the orbit.
      * @param {THREE.Vector3} axis the axis around which the object will orbit
-     * @param {Number} speed the speed at which the object will orbit
+     * @param {Number} angle the angle by which the object will orbit
      */
-    _orbit(axis, speed)
+    _orbit(axis, angle)
     {
-        let vLookAt2Src = Maths.subtractVectors(this.object3D.position, this.lookAtPosition)
+        let vLookAt2Src = Maths.subtractVectors(this.object3D.position, this.center)
         let vLookAt2Dest = new THREE.Vector3(vLookAt2Src.x, vLookAt2Src.y, vLookAt2Src.z)
-        vLookAt2Dest.applyAxisAngle(axis, Maths.toRadians(speed))
+        vLookAt2Dest.applyAxisAngle(axis, Maths.toRadians(angle))
         let offset = Maths.subtractVectors(vLookAt2Dest, vLookAt2Src)
         let destination = Maths.addVectors(this.object3D.position, offset)
         let [shouldMove, newDestination] = this.restriction(destination, this.object3D.position)
         if (shouldMove)
         {
             this.object3D.position.set(newDestination.x, newDestination.y, newDestination.z)
-            this.object3D.lookAt(this.lookAtPosition)
+            this.object3D.lookAt(this.center)
         }
     }
 }

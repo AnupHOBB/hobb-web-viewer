@@ -24,12 +24,6 @@ export class CameraManager extends SceneObject
      * @param {SceneManager} sceneManager the SceneManager object
      */
     onActive(sceneManager) {}
-
-    /**
-     * Returns a boolean value that indicates whether the camera is zoomed in or not,
-     * @returns {Boolean} the zoom status of camera
-     */
-    isZoomed() { return false }
 }
 
 /**
