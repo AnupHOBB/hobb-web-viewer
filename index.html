@@ -1,0 +1,28 @@
+<html>
+    <head>
+        <script type="module" src="index.js"></script>
+        <style>
+            body { overflow: hidden; }
+
+            input#file-input
+            {
+                position: absolute;
+                top: 0%;
+                left: 0%;
+                z-index: 1;
+            }
+
+            canvas#scene
+            {
+                position: absolute;
+                top: 0%;
+                left: 0%;
+            }
+        </style>
+    </head>
+
+    <body style="background-color: rgb(75, 75, 75);">
+        <input id="file-input" type="file"/>
+        <canvas id="scene"></canvas>
+    </body>
+</html>
