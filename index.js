@@ -5,7 +5,7 @@ import { GLTFLoader } from './node_modules/three/examples/jsm/loaders/GLTFLoader
 const MODEL_KEY = 'model'
 const TEXTURE_KEY = 'texture'
 let sceneManager
-let /**@type {ENGINE.MeshModel}*/model
+let model
 let assetLoader = new ENGINE.AssetLoader()
 let textures = []
 let textureUrls = []
@@ -41,12 +41,20 @@ function loadModel(assetMap)
 {
     if (model != undefined)
         sceneManager.unregister(model.name)
+    textures.splice(0, textures.length)
+    textureUrls.splice(0, textureUrls.length)
+    if (colorMenu != undefined)
+    {    
+        colorMenuContainer.removeChild(colorMenu)
+        colorMenu = null
+    }
+    //console.log(assetMap.get(MODEL_KEY))
     model = new ENGINE.MeshModel('Model', assetMap.get(MODEL_KEY), true)
     if (sceneManager != undefined)
         sceneManager.register(model)
 }
 
-function onTextureInput(/**@type {HTMLInputElement}*/textureInputTag)
+function onTextureInput(textureInputTag)
 {
     let filesCount = textureInputTag.files.length
     for (let i=0; i<filesCount; i++)
@@ -82,7 +90,7 @@ function setupScene()
 
 function showTextureUI()
 {
-    if (colorMenu != undefined)
+    if (colorMenu != undefined && colorMenu != null)
         colorMenuContainer.removeChild(colorMenu)
     colorMenu = document.createElement('div')
     colorMenu.id = 'color-menu'

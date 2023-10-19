@@ -146,6 +146,7 @@ class OrbitalCameraManagerCore extends PerspectiveCamera
         this.cameraOrbiterYaw.setCenter(this.lookAt)
         this.cameraOrbiterPitch = new OrbitControl(this.camera)
         this.cameraOrbiterPitch.setCenter(this.lookAt)
+        this.cameraOrbiterPitch.addRestriction((d, p) => this.pitchRestriction(d))
         this.panSensitivity = 0.01
         this.zoomSensitivity = 0.01
     }
@@ -232,5 +233,15 @@ class OrbitalCameraManagerCore extends PerspectiveCamera
         this.lookAt = Maths.addVectors(this.lookAt, Maths.scaleVector(this.up, -deltaY * this.panSensitivity))
         this.cameraOrbiterYaw.setCenter(this.lookAt)
         this.cameraOrbiterPitch.setCenter(this.lookAt)
+    }
+
+    /**
+     * Restricts camera pitc rotation in between -89 to 89 degrees
+     */
+    pitchRestriction(target)
+    {
+        let vLookAt2target = Maths.subtractVectors(target, this.lookAt)
+        let dot = Maths.dot(vLookAt2target, Maths.scaleVector(new THREE.Vector3(this.front.x, 0, this.front.z), -1))
+        return [dot > 0.017, target]
     }
 }
