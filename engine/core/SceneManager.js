@@ -328,7 +328,7 @@ export class SceneManager
                 this.sceneObjectMap.get(sceneObjectKey).onMessage(this, from, data)     
     }
 
-    setEnvironmentMap(envmap) { this.sceneRenderer.setEnvironmentMap(envmap) }
+    setBackground(background) { this.sceneRenderer.setBackground(background) }
 
     setBloomPercentage(percent) { this.sceneRenderer.setBloomPercentage(percent) }
 

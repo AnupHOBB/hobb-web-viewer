@@ -75,7 +75,7 @@ export class SceneRenderer
         this.finalComposer.addPass(this.colorBalancePass)
         this.finalComposer.addPass(this.gammaPass)
         this.groundReflector = null
-        this.envmap = new THREE.Color(1, 1, 1)
+        this.background = new THREE.Color(1, 1, 1)
         this.fxaaEnabled = true
         this.ssaaEnabled = false
         this.ssaoEnabled = false
@@ -95,13 +95,14 @@ export class SceneRenderer
     }
 
     /**
-     * Sets the environment map to the scene
-     * @param {THREE.Texture} envmap environment map to be applied on the scene 
+     * Sets the background to the scene. Valid values should either of type color, texture or cubetexture
+     * @param {THREE.Texture, THREE.Color, THREE.CubeTexture} background environment map to be applied on the scene 
      */
-    setEnvironmentMap(envmap)
+    setBackground(background)
     {
-        envmap.mapping = THREE.EquirectangularReflectionMapping
-        this.envmap = envmap
+        if (background.isTexture)
+            background.mapping = THREE.EquirectangularReflectionMapping
+        this.background = background
     }
 
     /**
@@ -458,7 +459,7 @@ export class SceneRenderer
         }
         for (let bloomSceneObject of this.bloomObjects)
             Misc.postOrderTraversal(bloomSceneObject, obj=>this._removeFromScene(obj))
-        this.scene.background = this.envmap
+        this.scene.background = this.background
     }
 
     /**

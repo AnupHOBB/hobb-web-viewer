@@ -28,7 +28,7 @@ class AssetLoaderCore
 {
     constructor()
     {
-        this.map = new Map()
+        this.loaderMap = new Map()
         this.urls = []
         this.assetMap = new Map()
     }
@@ -41,7 +41,7 @@ class AssetLoaderCore
      */
     addLoader(name, url, loader)
     {
-        this.map.set(url, loader)
+        this.loaderMap.set(url, loader)
         this.urls.push({ name: name, url: url })
     }
 
@@ -57,12 +57,14 @@ class AssetLoaderCore
         {    
             onComplete(this.assetMap)
             this.assetMap.clear()
+            this.loaderMap.clear()
+            this.urls.splice(0, this.urls.length)
         }
         else
         {
-            let loader = this.map.get(this.urls[index].url)
+            let loader = this.loaderMap.get(this.urls[index].url)
             loader.load(this.urls[index].url, asset=>{
-                this.map.delete(this.urls[index].url)
+                this.loaderMap.delete(this.urls[index].url)
                 this.assetMap.set(this.urls[index].name, asset)
                 onProgress(Math.round(((index + 1)/this.urls.length) * 100))
                 this.load(++index, onProgress, onComplete)

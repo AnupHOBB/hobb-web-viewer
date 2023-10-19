@@ -73,6 +73,12 @@ export class OrbitalCameraManager extends CameraManager
     setPanSensitivity(sensitivity) { this.core.setPanSensitivity(sensitivity) }
 
     /**
+     * Sets the sensitivity of the camera zoom
+     * @param {Number} sensitivity the sensitivity value for camera zoom
+     */
+    setZoomSensitivity(sensitivity) { this.core.setZoomSensitivity(sensitivity) }
+
+    /**
      * Sets the camera aspect ratio
      * @param {Number} aspect aspect ratio of camera 
      */
@@ -141,6 +147,7 @@ class OrbitalCameraManagerCore extends PerspectiveCamera
         this.cameraOrbiterPitch = new OrbitControl(this.camera)
         this.cameraOrbiterPitch.setCenter(this.lookAt)
         this.panSensitivity = 0.01
+        this.zoomSensitivity = 0.01
     }
 
     /**
@@ -162,6 +169,16 @@ class OrbitalCameraManagerCore extends PerspectiveCamera
     { 
         if (sensitivity > 0)
             this.panSensitivity = sensitivity 
+    }
+
+    /**
+     * Sets the sensitivity of the camera zoom
+     * @param {Number} sensitivity the sensitivity value for camera zoom
+     */
+    setZoomSensitivity(sensitivity) 
+    { 
+        if (sensitivity > 0)
+            this.zoomSensitivity = sensitivity 
     }
 
     /**
@@ -196,9 +213,8 @@ class OrbitalCameraManagerCore extends PerspectiveCamera
      */
     zoom(scale) 
     { 
-        let fov = this.camera.fov + scale 
-        if (fov > 0)
-            this.camera.fov = fov
+        let position = Maths.addVectors(this.camera.position, Maths.scaleVector(this.front, -scale * this.zoomSensitivity))
+        this.camera.position.set(position.x, position.y, position.z)
     }
 
     /**
@@ -209,8 +225,7 @@ class OrbitalCameraManagerCore extends PerspectiveCamera
      */
     pan(deltaX, deltaY)
     {
-        let position = this.camera.position
-        position = Maths.addVectors(position, Maths.scaleVector(this.right, deltaX * this.panSensitivity))
+        let position = Maths.addVectors(this.camera.position, Maths.scaleVector(this.right, deltaX * this.panSensitivity))
         position = Maths.addVectors(position, Maths.scaleVector(this.up, -deltaY * this.panSensitivity))
         this.camera.position.set(position.x, position.y, position.z)
         this.lookAt = Maths.addVectors(this.lookAt, Maths.scaleVector(this.right, deltaX * this.panSensitivity))

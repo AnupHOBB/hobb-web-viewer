@@ -2,13 +2,22 @@
     <head>
         <script type="module" src="index.js"></script>
         <style>
+            @import "color-menu.css";
             body { overflow: hidden; }
 
-            input#file-input
+            input#model-input
             {
                 position: absolute;
                 top: 0%;
                 left: 0%;
+                z-index: 1;
+            }
+
+            input#texture-input
+            {
+                position: absolute;
+                top: 0%;
+                right: 0%;
                 z-index: 1;
             }
 
@@ -22,7 +31,9 @@
     </head>
 
     <body style="background-color: rgb(75, 75, 75);">
-        <input id="file-input" type="file" accept=".glb"/>
+        <input id="model-input" type="file" accept=".glb"/>
+        <input id="texture-input" type="file" accept=".jpg,.png" multiple/>
         <canvas id="scene"></canvas>
+        <div id="color-menu-container"><div id="color-menu-outer"></div></div>
     </body>
 </html>
