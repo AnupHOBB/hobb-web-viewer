@@ -13,6 +13,8 @@ let textures = []
 let textureUrls = []
 let colorMenuContainer
 let colorMenu
+let cameraOgPosition = new THREE.Vector3(0, 0, 1)
+let cameraOgLookAt = new THREE.Vector3(0, 0, 0)
 
 window.onload = () => 
 {
@@ -20,6 +22,8 @@ window.onload = () =>
     modelInputTag.addEventListener('input', e => onModelInput(modelInputTag))
     let textureInputTag = document.querySelector('input#texture-input')
     textureInputTag.addEventListener('input', e => onTextureInput(textureInputTag))
+    let resetButton = document.querySelector('p#reset-btn')
+    resetButton.addEventListener('click', onReset)
     colorMenuContainer = document.getElementById('color-menu-outer')
     setupScene()
 }
@@ -43,6 +47,8 @@ function loadModel(assetMap)
 {
     if (model != undefined)
         sceneManager.unregister(model.name)
+    for (let url of textureUrls)
+        URL.revokeObjectURL(url)
     textures.splice(0, textures.length)
     textureUrls.splice(0, textureUrls.length)
     if (colorMenu != undefined)
@@ -64,9 +70,11 @@ function positionCamera()
         bound.setFromObject(model.scene)
         let distanceVector = ENGINE.Maths.subtractVectors(bound.max, bound.min)
         let factor = (distanceVector.length()/2) * Math.cos(ENGINE.Maths.toRadians(FOV/2))
-        cameraManager.setPosition(0, factor * 0.75, factor * 3)
-        cameraManager.setLookAt(new THREE.Vector3(0, factor * 0.75, 0))
-        cameraManager.setPanSensitivity(factor *  0.01)
+        cameraOgPosition = new THREE.Vector3(0, factor * 0.75, factor * 3)
+        cameraManager.setPosition(cameraOgPosition.x, cameraOgPosition.y, cameraOgPosition.z)
+        cameraOgLookAt = new THREE.Vector3(0, factor * 0.75, 0)
+        cameraManager.setLookAt(cameraOgLookAt)
+        cameraManager.setPanSensitivity(factor * 0.01)
         cameraManager.setZoomSensitivity(factor *  0.1)
     }
 }
@@ -98,7 +106,7 @@ function setupScene()
     cameraManager = new ENGINE.OrbitalCameraManager('Camera', FOV)
     cameraManager.setZoomSensitivity(0.1)
     cameraManager.registerInput(input)
-    cameraManager.setPosition(0, 0, 1)
+    cameraManager.setPosition(cameraOgPosition.x, cameraOgPosition.y, cameraOgPosition.z)
     sceneManager.register(cameraManager)
     sceneManager.setActiveCamera('Camera')
     let ambientLight = new ENGINE.AmbientLight('Ambient', new THREE.Color(1, 1, 1), 1)
@@ -130,4 +138,13 @@ function onTextureClick(index)
 {
     if (model != undefined && model != null)
         model.applyTexture(textures[index])
+}
+
+function onReset()
+{
+    if (cameraManager != undefined)
+    {
+        cameraManager.setPosition(cameraOgPosition.x, cameraOgPosition.y, cameraOgPosition.z)
+        cameraManager.setLookAt(cameraOgLookAt)
+    }
 }

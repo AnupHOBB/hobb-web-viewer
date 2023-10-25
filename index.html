@@ -3,7 +3,24 @@
         <script type="module" src="index.js"></script>
         <style>
             @import "color-menu.css";
+
             body { overflow: hidden; }
+
+            div#reset-container
+            {
+                position: absolute;
+                top: 0%;
+                left: 0%;
+                width: 100%;
+            }
+
+            p#reset-btn
+            {
+                width: 5%;
+                margin-left: auto;
+                margin-right: auto;
+                font-size: medium;
+            }
 
             input#model-input
             {
@@ -30,10 +47,11 @@
         </style>
     </head>
 
-    <body style="background-color: rgb(75, 75, 75);">
+    <body>
+        <canvas id="scene"></canvas>
+        <div id="reset-container"><p id="reset-btn">RESET</p></div>
         <input id="model-input" type="file" accept=".glb"/>
         <input id="texture-input" type="file" accept=".jpg,.png" multiple/>
-        <canvas id="scene"></canvas>
         <div id="color-menu-container"><div id="color-menu-outer"></div></div>
     </body>
 </html>
