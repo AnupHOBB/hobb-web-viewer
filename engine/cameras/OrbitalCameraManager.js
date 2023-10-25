@@ -160,6 +160,7 @@ class OrbitalCameraManagerCore extends PerspectiveCamera
         this.lookAt = lookAt
         this.cameraOrbiterYaw.setCenter(this.lookAt)
         this.cameraOrbiterPitch.setCenter(this.lookAt)
+        this.camera.lookAt(lookAt)
     }
 
     /**

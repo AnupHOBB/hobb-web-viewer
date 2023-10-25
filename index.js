@@ -4,7 +4,9 @@ import { GLTFLoader } from './node_modules/three/examples/jsm/loaders/GLTFLoader
 
 const MODEL_KEY = 'model'
 const TEXTURE_KEY = 'texture'
+const FOV = 50
 let sceneManager
+let cameraManager
 let model
 let assetLoader = new ENGINE.AssetLoader()
 let textures = []
@@ -48,10 +50,25 @@ function loadModel(assetMap)
         colorMenuContainer.removeChild(colorMenu)
         colorMenu = null
     }
-    //console.log(assetMap.get(MODEL_KEY))
     model = new ENGINE.MeshModel('Model', assetMap.get(MODEL_KEY), true)
+    positionCamera()
     if (sceneManager != undefined)
         sceneManager.register(model)
+}
+
+function positionCamera()
+{
+    if (cameraManager != undefined && model != undefined)
+    {
+        let bound = new THREE.Box3()
+        bound.setFromObject(model.scene)
+        let distanceVector = ENGINE.Maths.subtractVectors(bound.max, bound.min)
+        let factor = (distanceVector.length()/2) * Math.cos(ENGINE.Maths.toRadians(FOV/2))
+        cameraManager.setPosition(0, factor * 0.75, factor * 3)
+        cameraManager.setLookAt(new THREE.Vector3(0, factor * 0.75, 0))
+        cameraManager.setPanSensitivity(factor *  0.01)
+        cameraManager.setZoomSensitivity(factor *  0.1)
+    }
 }
 
 function onTextureInput(textureInputTag)
@@ -78,10 +95,10 @@ function setupScene()
     sceneManager.setBackground(new THREE.Color(0.1, 0.1, 0.1))
     let input = new ENGINE.InputManager('Input', canvas)
     sceneManager.register(input)
-    let cameraManager = new ENGINE.OrbitalCameraManager('Camera', 50)
+    cameraManager = new ENGINE.OrbitalCameraManager('Camera', FOV)
     cameraManager.setZoomSensitivity(0.1)
     cameraManager.registerInput(input)
-    cameraManager.setPosition(0, 0, 5)
+    cameraManager.setPosition(0, 0, 1)
     sceneManager.register(cameraManager)
     sceneManager.setActiveCamera('Camera')
     let ambientLight = new ENGINE.AmbientLight('Ambient', new THREE.Color(1, 1, 1), 1)
